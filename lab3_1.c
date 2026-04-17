@@ -369,13 +369,39 @@ void print_tree(Node *root, int level, char side){
     print_tree(root->left, level+1, 'L');
 }
 
-void normal_print(Node *root){
+void normal_print(Node *root, int parent_pr, int is_left){
     if (root == NULL){
         return;
     }
-    normal_print(root->left);
-    print_word(root->value);
-    normal_print(root->right);
+    if(root->value->type != 'o'){
+        print_word(root->value);
+        return;
+    }
+    char op = root->value->sigh[0];
+    int pr = get_priority(op);
+
+    int need_bracket = 0;
+    if(parent_pr>0){
+        if(pr < parent_pr){
+            need_bracket = 1;
+        }else if (pr == parent_pr){
+            if (op == '^') {
+                need_bracket = (is_left == 1);
+            } else if (op == '-' || op == '/') {
+                need_bracket = (is_left == 0);
+            }
+        }
+    }
+    if (need_bracket == 1){printf("(");}
+    if (op == '~'){
+        putchar(op);
+        normal_print(root->right, pr, 0);
+    }else{
+        normal_print(root->left, pr, 0);
+        putchar(op);
+        normal_print(root->right, pr, 1);
+    }
+    if(need_bracket == 1){printf(")");}
 
 }
 
@@ -473,7 +499,7 @@ void main(){
     print_tree(root, 0, ' ');
 
     printf("\nNormal expression after count:\n");
-    normal_print(root);
+    normal_print(root, 0, 0);
 
     for (int i = 0; i < new_len; i++){
         delete_word(stack[i]);

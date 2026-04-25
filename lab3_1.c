@@ -311,7 +311,20 @@ void count_tree(Node *root){
                 int num1 = from_char_to_int(right->value->size, right->value->sigh);
                 int num2 = from_char_to_int(left->right->value->size, left->right->value->sigh);
                 int total = num1-num2;
-                change_root(root, total);
+                if (total < 0){
+                    change_root(root, -1*total);
+                    Word *minus = create_word('n');
+                    for(int i = 0; i < root->value->size; i++){
+                        add(minus, root->value->sigh[i]); 
+                    }
+                    Node *new_node = create_node(minus);
+                    root->right = new_node;
+                    root->value->sigh[0] = '~';
+                    root->value->type = 'o';
+                    root->value->size = 1;
+                }else{
+                    change_root(root, total);
+                }
             }
         }
         else if(left->value->type == 'n' && right->value->type == 'o' && right->value->sigh[0] == '~'){
@@ -319,7 +332,19 @@ void count_tree(Node *root){
                 int num2 = from_char_to_int(left->value->size, left->value->sigh);
                 int num1 = from_char_to_int(right->right->value->size, right->right->value->sigh);
                 int total = num2 - num1;
-                change_root(root, total);
+                if (total < 0){
+                    change_root(root, -1*total);
+                    Word *minus = create_word('n');
+                    for(int i = 0; i < root->value->size; i++){
+                        add(minus, root->value->sigh[i]); 
+                    }
+                    Node *new_node = create_node(minus);
+                    root->right = new_node;
+                    root->value->sigh[0] = '~';
+                    root->value->type = 'o';
+                    root->value->size = 1;
+                }else{
+                change_root(root, total);}
             }
         }
     }
